@@ -10,6 +10,8 @@ db = client.crowdcube
 
 def store_in_db():
     invs = sc.extract()
+    if len(invs) == 0:
+        return []
     results = db.live_investements.insert_many([x.__dict__ for x in invs])
     return results
 
@@ -23,7 +25,6 @@ def analyze_investements():
             total_amount_raised +=  c['amount_raised']
     return count, total_amount_raised
 
-#need to read more about mongo aggregration using python
 def analyze_investements_mongo():
     key = None
     condition = { 'days_remaining' : {'$gt':10}}
@@ -51,4 +52,16 @@ def dump_kickstarter():
         print 'Inserted ' + str(len(results.inserted_ids)) + ' rows. Total inserted till now ' + str(total_rows) 
         if json_content['has_more'] != True:
             break    
-    print 'Total rows in kickstarter collection: ' + str(db.kickstarter.count())        
+    print 'Total rows in kickstarter collection: ' + str(db.kickstarter.count()) 
+
+if __name__ == "__main__":
+    print 'The number of records in live_investements before scraping:' + str(db.live_investements.count())
+    results = store_in_db()
+    print 'Feteched ' + str( len(results.inserted_ids)) + ' from scraping'
+    print 'The number of records in live_investements after scraping:' + str(db.live_investements.count())
+    count_p, total_amount_raised_p = analyze_investements()
+    count_m, total_amount_raised_m = analyze_investements_mongo()
+    print 'The number of investements with days_left greater than 10: ' + str(count_p) + ' ,Amount raised: ' + str(total_amount_raised_p) + ' using python'
+    print 'The number of investements with days_left greater than 10: ' + str(count_m) + ' ,Amount raised: ' + str(total_amount_raised_m) + ' using Mongo'
+    print 'Extracting kickstarter data'
+    dump_kickstarter()

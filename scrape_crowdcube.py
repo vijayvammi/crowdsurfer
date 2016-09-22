@@ -16,7 +16,6 @@ def extract():
        'Connection': 'keep-alive'} #mocking browser headers : http://stackoverflow.com/questions/13303449/urllib2-httperror-http-error-403-forbidden
     req = urllib2.Request(url, headers = hdr)
     response = urllib2.urlopen(req)
-    print 'Got the response'
     if response.getcode() != 200:
         return [] #the page scrape did not work well, should have a better handling approach
     content = response.read()
@@ -40,8 +39,6 @@ def extract():
         investments.append(investement)
 
     return investments            
-
-
 
 
 

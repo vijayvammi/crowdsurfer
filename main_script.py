@@ -9,6 +9,9 @@ client = MongoClient()
 db = client.crowdcube
 
 def store_in_db():
+    '''
+    Extract information from crowdcube and store it in MongoDB
+    '''
     invs = sc.extract()
     if len(invs) == 0:
         return []
@@ -34,6 +37,10 @@ def analyze_investements_mongo():
     return result['count'], result['sum']
 
 def dump_kickstarter():
+    '''
+    Use kickstarter internal API to extract information about 100 projects in 
+    category_id =1 (ART) and store them in Mongo
+    '''
     base_url = 'https://www.kickstarter.com/discover/advanced?google_chrome_workaround&category_id=1&woe_id=0&sort=magic&seed=2457444'
     hdr = {'X-Requested-With': 'XMLHttpRequest',
             'Accept': 'application/json, text/javascript, */*; q=0.01'}
@@ -63,5 +70,6 @@ if __name__ == "__main__":
     count_m, total_amount_raised_m = analyze_investements_mongo()
     print 'The number of investements with days_left greater than 10: ' + str(count_p) + ' ,Amount raised: ' + str(total_amount_raised_p) + ' using python'
     print 'The number of investements with days_left greater than 10: ' + str(count_m) + ' ,Amount raised: ' + str(total_amount_raised_m) + ' using Mongo'
+    print '######'
     print 'Extracting kickstarter data'
     dump_kickstarter()

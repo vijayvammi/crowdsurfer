@@ -29,6 +29,17 @@ def analyze_investements():
     return count, total_amount_raised
 
 def analyze_investements_mongo():
+    cursor = db.live_investements.aggregate(
+        [
+            {"$match": {"days_remaining": {"$gt": 10}}},
+            {"$group": {"_id": "null", "total": {"$sum": "$amount_raised"}, "count": {"$sum": 1}}}
+        ]
+    )
+    result = list(cursor)
+    return result[0]['count'], result[0]['total']
+
+
+def analyze_investements_mongo_sql():
     key = None
     condition = { 'days_remaining' : {'$gt':10}}
     initial = { 'count':0, 'sum':0}
